@@ -36,8 +36,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: actions/download
-
       - name: Create some files
         run: |
           echo "foo" > foo.txt
