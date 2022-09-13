@@ -1,0 +1,54 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+
+permissions:
+  contents: write
+
+jobs:
+  stage1:
+    runs-on: ubuntu-latest
+
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Create some files
+      run: |
+        echo "foo" > foo.txt
+        echo "bar" > bar.txt
+        mkdir subdir && cd subdir
+        echo "subfoo" > sfoo.txt
+        echo "subbar" > sbar.txt
+    
+    - uses: actions/upload-artifact@v3
+      with:
+        name: build-output.${{ github.run_number }}
+        path: |
+          **/*.txt
+
+  stage2:
+    runs-on: ubuntu-latest
+
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - uses: actions/download
+
+    - name: Create some files
+      run: |
+        echo "foo" > foo.txt
+        echo "bar" > bar.txt
+        mkdir subdir && cd subdir
+        echo "subfoo" > sfoo.txt
+        echo "subbar" > sbar.txt
+    
+    - uses: actions/download-artifact@v3
+      with:
+        name: build-output.${{ github.run_number }}
+
+    - name: List
+      run: ls -laR
